@@ -10,6 +10,7 @@
 ###< symfony/framework-bundle ###
 /dbos-test.code-workspace
 /.devcontainer/
+/.vscode/
 ###> symfony/phpunit-bridge ###
 .phpunit.result.cache
 /phpunit.xml
