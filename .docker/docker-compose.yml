@@ -33,6 +33,8 @@ services:
             - ../:/app:cached
             - symfony_app_var:/app/var
             - symfony_app_vendor:/app/vendor
+        ports:
+            - 9003:9003
         networks:
             - symfony_app
     nginx:
