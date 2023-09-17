@@ -61,6 +61,20 @@ class TaskService implements TaskServiceInterface
 
     public function getTaskSummary(): array
     {
-        return [];   
+        $date = new \DateTime();
+        $taskSummaries = $this->taskRepository->getTaskSummary($date);
+
+        $totalTimeWorkedInDay = 0;
+
+        foreach ($taskSummaries as $summary) {
+            $totalTimeWorkedInDay += $summary['totalTimeWorked'];
+        }
+
+        // $this->logger->info('getTaskSummary:', ['taskSummaries::' => $taskSummaries]);
+
+        return [
+            'totalTimeWorkedInDay' => $totalTimeWorkedInDay,
+            'tasks' => $taskSummaries,
+        ];
     }
 }

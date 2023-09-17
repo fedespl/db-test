@@ -3,21 +3,22 @@
 {% block title %}Task Summary{% endblock %}
 
 {% block body %}
-    <h1>Task Summary</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Task Name</th>
-                <th>Total Time (hours)</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for taskName, totalTime in summary %}
-                <tr>
-                    <td>{{ taskName }}</td>
-                    <td>{{ totalTime }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="container mt-4 text-center">
+    <div><h1>Task Summary</h1></div>
+
+    <div><h2>Total Time Worked Today: {{ summary.totalTimeWorkedInDay }} seconds</h2></div>
+
+    <div><h2>Task Breakdown:</h2></div>
+    <ul class="list-group">
+        {% for task in summary.tasks %}
+            <li class="list-group-item">{{ task.taskName }}: {{ task.totalTimeWorked }} seconds</li>
+        {% endfor %}
+    </ul>
+
+    <div class="row">
+        <div class="col-md-4 offset-md-4 text-center">
+            <a href="{{ path('task_index') }}" class="btn btn-secondary mt-3">Home</a>
+        </div>
+    </div> 
+</div>
 {% endblock %}

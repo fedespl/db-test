@@ -21,6 +21,40 @@ class TaskRepository extends ServiceEntityRepository
         parent::__construct($registry, Task::class);
     }
 
+    public function getTaskSummary(\DateTimeInterface $date): array
+    {
+        $tasks = $this->createQueryBuilder('t')
+            ->leftJoin('t.timeEntries', 'te')
+            ->where('te.startTime >= :startDate')
+            ->andWhere('te.startTime < :endDate')
+            ->setParameter('startDate', $date->format('Y-m-d 00:00:00'))
+            ->setParameter('endDate', $date->format('Y-m-d 23:59:59'))
+            ->getQuery()
+            ->getResult();
+
+        $summary = [];
+        
+        foreach ($tasks as $task) {
+            $totalTaskTimeWorked = 0;
+            
+            foreach ($task->getTimeEntries() as $timeEntry) {
+                $startTime = $timeEntry->getStartTime();
+                $endTime = $timeEntry->getEndTime();
+
+                if ($startTime && $endTime) {
+                    $totalTaskTimeWorked += $endTime->getTimestamp() - $startTime->getTimestamp();
+                }
+            }
+
+            $summary[] = [
+                'taskName' => $task->getName(),
+                'totalTimeWorked' => $totalTaskTimeWorked,
+            ];
+        }
+
+        return $summary;
+    }
+
 //    /**
 //     * @return Task[] Returns an array of Task objects
 //     */
