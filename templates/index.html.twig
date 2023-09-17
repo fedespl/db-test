@@ -1,0 +1,141 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
+
+{% block title %}Task Time Tracker{% endblock %}
+
+{% block body %}
+
+<div>
+    {# <h1>Task Tracker</h1>
+
+    {{ form_start(form, {'attr': {'id': 'task-form'}}) }}
+    {{ form_row(form.name, {'attr': {'placeholder': 'Enter task name'}}) }}
+    {{ form_end(form) }} #}
+
+
+    <div class="container mt-4">
+
+        <div class="row"> 
+            <div class="text-center"><h1>Task Tracker</h1>
+
+            {{ form_start(form, {'attr': {'id': 'task-form'}}) }}
+            {{ form_row(form.name) }}
+            {{ form_end(form) }}
+        </div>
+
+        
+        <div class="row gy-2">
+            <div class="col-md-4 offset-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="text-center" id="display">00:00:00</h1>
+                        <div class="text-center">
+                            <button class="btn btn-success" id="start_btn">Start</button>
+                            <button class="btn btn-danger" id="stop_btn">Stop</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="success-message" class="alert alert-success mt-3" style="display: none;"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 offset-md-4 text-center">
+                <a href="{{ path('task_summary') }}" class="btn btn-secondary mt-3">View Summary</a>
+            </div>
+        </div> 
+    </div>
+    
+    {# <a href="{{ path('task_summary') }}" class="btn btn-secondary">View Summary</a>
+
+    <div id="success-message" class="alert alert-success mt-3" style="display: none;"></div> #}
+
+</div>
+
+<script>
+    $(document).ready(function() {
+        let form = $('#task-form');
+        let startButton = $('#start_btn');
+        let stopButton = $('#stop_btn');
+        let successMessage = $('#success-message');
+
+        let timer;
+        let isRunning = false;
+        let startTime = 0;
+        let elapsedTime = 0;
+
+        // Display the time in HH:MM:SS format
+        function displayTime() {
+            const timeDisplay = document.getElementById('display');
+            const seconds = Math.floor(elapsedTime / 1000) % 60;
+            const minutes = Math.floor(elapsedTime / (1000 * 60)) % 60;
+            const hours = Math.floor(elapsedTime / (1000 * 60 * 60));
+            timeDisplay.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Function to enable or disable the "Start Task" button based on form validity.
+        function updateStartButtonState() {
+            if (form[0].checkValidity()) {
+                startButton.prop('disabled', false);
+            } else {
+                startButton.prop('disabled', true);
+            }
+        }
+
+        $('#task_form_name').on('input', function() { 
+            updateStartButtonState();
+        });
+
+        // Update the time
+        function updateTime() {
+            elapsedTime = Date.now() - startTime;
+            displayTime();
+        }
+
+        startButton.on('click', function(event) {
+            event.preventDefault();
+
+            if (!isRunning) {
+                clearInterval(timer);
+                elapsedTime = 0;
+                displayTime();
+
+                startTime = Date.now();
+                timer = setInterval(updateTime, 1000);
+                isRunning = true;
+
+                makeAjaxCall('{{ path('task_start') }}');
+            }
+        });
+
+        stopButton.on('click', function(event) {
+            event.preventDefault();
+
+            if (isRunning) {
+                clearInterval(timer);
+                elapsedTime = Date.now() - startTime;
+                isRunning = false;
+
+                makeAjaxCall('{{ path('task_stop') }}');
+            }
+        });
+
+        function makeAjaxCall(path)
+        {
+            $.ajax({
+                    url: path,
+                    method: 'POST',
+                    data: {
+                        name: $('#task_form_name').val()
+                    },
+                    success: function(data) {
+                        successMessage.text(data.message);
+                        successMessage.show();
+                    }
+                });
+        }
+        updateStartButtonState();
+    });
+</script>
+
+{% endblock %}

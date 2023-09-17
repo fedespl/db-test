@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Task Summary{% endblock %}
+
+{% block body %}
+    <h1>Task Summary</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Task Name</th>
+                <th>Total Time (hours)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for taskName, totalTime in summary %}
+                <tr>
+                    <td>{{ taskName }}</td>
+                    <td>{{ totalTime }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
