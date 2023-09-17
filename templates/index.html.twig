@@ -37,6 +37,7 @@
                     </div>
                 </div>
                 <div id="success-message" class="alert alert-success mt-3" style="display: none;"></div>
+                <div id="error-message" class="alert alert-danger mt-3" style="display: none;"></div>
             </div>
         </div>
         <div class="row">
@@ -58,6 +59,7 @@
         let startButton = $('#start_btn');
         let stopButton = $('#stop_btn');
         let successMessage = $('#success-message');
+        let errorMessage = $('#error-message');
 
         let timer;
         let isRunning = false;
@@ -96,15 +98,19 @@
             event.preventDefault();
 
             if (!isRunning) {
-                clearInterval(timer);
-                elapsedTime = 0;
-                displayTime();
 
-                startTime = Date.now();
-                timer = setInterval(updateTime, 1000);
-                isRunning = true;
+                makeAjaxCall('{{ path('task_start') }}')
+                    .then(function(data) {
+console.log('111');
+                        clearInterval(timer);
+                        elapsedTime = 0;
+                        displayTime();
 
-                makeAjaxCall('{{ path('task_start') }}');
+                        startTime = Date.now();
+                        timer = setInterval(updateTime, 1000);
+                        isRunning = true;
+                    })
+                    .catch(function(error) {});
             }
         });
 
@@ -112,16 +118,45 @@
             event.preventDefault();
 
             if (isRunning) {
-                clearInterval(timer);
-                elapsedTime = Date.now() - startTime;
-                isRunning = false;
-
-                makeAjaxCall('{{ path('task_stop') }}');
+                makeAjaxCall('{{ path('task_stop') }}')
+                    .then(function(data) {
+                        clearInterval(timer);
+                        elapsedTime = Date.now() - startTime;
+                        isRunning = false;
+                    })
+                    .catch(function(error) { });
             }
         });
 
-        function makeAjaxCall(path)
+        function makeAjaxCall(path) {
+            return new Promise(function(resolve, reject) {
+                $.ajax({
+                    url: path,
+                    method: 'POST',
+                    data: {
+                        name: $('#task_form_name').val()
+                    },
+                    success: function(data) {
+                        showSuccessMessage(data.message);
+                        resolve(data);
+                    },
+                    error: function(xhr, textStatus, errorThrown, errorMessage) {
+                        if (isRunning) {
+                            clearInterval(timer);
+                            isRunning = false;
+                        }
+                        showErrorMessage(xhr.responseJSON.message || 'An error occurred during the request.');
+                        reject('An error occurred during the request.');
+                    }
+                });
+            });
+        }
+
+
+        /*function makeAjaxCall(path)
         {
+            return new Promise(function(resolve, reject) {
+            }
             $.ajax({
                     url: path,
                     method: 'POST',
@@ -129,12 +164,47 @@
                         name: $('#task_form_name').val()
                     },
                     success: function(data) {
-                        successMessage.text(data.message);
-                        successMessage.show();
+                        if (data.success) {
+                            // Task started or stopped successfully
+                            showSuccessMessage(data.message);
+                        } else {
+                            showErrorMessage(data.message);
+
+                            // If there is an error, prevent the stopwatch from starting
+                            if (isRunning) {
+                                clearInterval(timer);
+                                isRunning = false;
+                            }
+                        }
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        // Handle Ajax error here
+                        showErrorMessage('An error occurred during the request.');
+                        // If there is an error, prevent the stopwatch from starting
+                        if (isRunning) {
+                            clearInterval(timer);
+                            isRunning = false;
+                        }
                     }
                 });
-        }
+        }*/
+
         updateStartButtonState();
+
+        function showSuccessMessage(message)
+        {
+            successMessage.text(message);
+            successMessage.show();
+            errorMessage.hide();
+        }
+
+        function showErrorMessage(message)
+        {
+            errorMessage.text(message);
+            errorMessage.show();
+            successMessage.hide();
+        }
+
     });
 </script>
 

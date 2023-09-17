@@ -20,6 +20,10 @@ class TaskService implements TaskServiceInterface
 
     public function startTask(string $taskName): void
     {
+        if (empty($taskName)) {
+            throw new \InvalidArgumentException('Task name cannot be null');
+        }
+
         $existingTask = $this->taskRepository->findOneBy(['name' => $taskName]);
         if ($existingTask) {
             $task = $existingTask;
@@ -54,22 +58,5 @@ class TaskService implements TaskServiceInterface
     
             $this->entityManager->flush();
         }
-    }
-
-    public function getTaskSummary(): array
-    {
-        $date = new \DateTime();
-        $taskSummaries = $this->taskRepository->getTaskSummary($date);
-
-        $totalTimeWorkedInDay = 0;
-
-        foreach ($taskSummaries as $summary) {
-            $totalTimeWorkedInDay += $summary['totalTimeWorked'];
-        }
-
-        return [
-            'totalTimeWorkedInDay' => $totalTimeWorkedInDay,
-            'tasks' => $taskSummaries,
-        ];
     }
 }

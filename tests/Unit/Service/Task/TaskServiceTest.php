@@ -66,22 +66,4 @@ class TaskServiceTest extends TestBase
 
         $this->taskService->stopTask($taskName);
     }
-
-    public function testGetTaskSummary()
-    {
-        // Mock the taskRepository to return some dummy data
-        $dummyTaskSummaries = [
-            ['totalTimeWorked' => 3600], // 1 hour
-            ['totalTimeWorked' => 1800], // 30 minutes
-        ];
-
-        $this->taskRepository->expects($this->once())
-            ->method('getTaskSummary')
-            ->willReturn($dummyTaskSummaries);
-
-        $result = $this->taskService->getTaskSummary();
-
-        $this->assertEquals(5400, $result['totalTimeWorkedInDay']); // 1 hour and 30 minutes
-        $this->assertEquals($dummyTaskSummaries, $result['tasks']);
-    }
 }
