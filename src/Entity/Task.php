@@ -108,4 +108,29 @@ class Task
 
         return $this;
     }
+
+    /**
+     * Get the current TimeEntry associated with this Task.
+     * This method assumes that the "current" TimeEntry is the last one in the collection.
+     *
+     * @return TimeEntry|null
+     */
+    public function getCurrentTimeEntry(): ?TimeEntry
+    {
+        $entries = $this->getTimeEntries();
+
+        // Filter TimeEntries to find the one without an end time.
+        $activeEntries = $entries->filter(function (TimeEntry $entry) {
+            return $entry->getEndTime() === null;
+        });
+
+        // Sort the active entries by id (descending).
+        $sortedEntries = $activeEntries->toArray();
+        usort($sortedEntries, function (TimeEntry $a, TimeEntry $b) {
+            return $b->getId() <=> $a->getId();
+        });
+
+        // The first entry (if any) will be the "current" one.
+        return reset($sortedEntries);
+    }
 }

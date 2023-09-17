@@ -25,8 +25,7 @@ class TimeEntry
     #[Assert\NotNull]
     private ?\DateTimeInterface $startTime = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Assert\NotNull]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     #[CustomAssert\EndTimeGreaterThanStartTime]
     private ?\DateTimeInterface $endTime = null;
 
