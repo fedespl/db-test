@@ -26,6 +26,7 @@ class SummaryService implements SummaryServiceInterface
 
         return [
             'totalTimeWorkedInDay' => $totalTimeWorkedInDay,
+            'totalTimeWorkedInDayFormatted' => gmdate("H:i:s", $totalTimeWorkedInDay),
             'tasks' => $taskSummaries,
         ];
     }

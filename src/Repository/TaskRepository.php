@@ -35,20 +35,12 @@ class TaskRepository extends ServiceEntityRepository
         $summary = [];
         
         foreach ($tasks as $task) {
-            $totalTaskTimeWorked = 0;
-            
-            foreach ($task->getTimeEntries() as $timeEntry) {
-                $startTime = $timeEntry->getStartTime();
-                $endTime = $timeEntry->getEndTime();
-
-                if ($startTime && $endTime) {
-                    $totalTaskTimeWorked += $endTime->getTimestamp() - $startTime->getTimestamp();
-                }
-            }
+            $totalTaskTimeWorked = $task->calculateTotalElapsedTime();
 
             $summary[] = [
                 'taskName' => $task->getName(),
                 'totalTimeWorked' => $totalTaskTimeWorked,
+                'totalTimeWorkedFormatted' => gmdate("H:i:s", $totalTaskTimeWorked)
             ];
         }
 

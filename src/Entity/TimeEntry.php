@@ -69,4 +69,36 @@ class TimeEntry
 
         return $this;
     }
+
+    public function calculateElapsedTimeInSeconds(): ?int
+    {
+        $startTime = $this->getStartTime();
+        $endTime = $this->getEndTime();
+
+        if ($startTime && $endTime) {
+            return $endTime->getTimestamp() - $startTime->getTimestamp();
+        }
+
+        return null;
+    }
+
+    /**
+     * Calculate the total elapsed time and return it in HH:MM:SS format.
+     *
+     * @return string|null
+     */
+    public function getTotalElapsedTime(): ?string
+    {
+        $startTime = $this->getStartTime();
+        $endTime = $this->getEndTime();
+
+        if ($startTime && $endTime) {
+            $elapsed = $endTime->diff($startTime);
+
+            // Format the elapsed time as HH:MM:SS
+            return $elapsed->format('%H:%I:%S');
+        }
+
+        return null;
+    }
 }

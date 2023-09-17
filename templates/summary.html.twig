@@ -6,12 +6,12 @@
 <div class="container mt-4 text-center">
     <div><h1>Task Summary</h1></div>
 
-    <div><h2>Total Time Worked Today: {{ summary.totalTimeWorkedInDay }} seconds</h2></div>
+    <div><h2>Total Time Worked Today: {{ summary.totalTimeWorkedInDayFormatted }} </h2></div>
 
     <div><h2>Task Breakdown:</h2></div>
     <ul class="list-group">
         {% for task in summary.tasks %}
-            <li class="list-group-item">{{ task.taskName }}: {{ task.totalTimeWorked }} seconds</li>
+            <li class="list-group-item">{{ task.taskName }}: {{ task.totalTimeWorkedFormatted }} </li>
         {% endfor %}
     </ul>
 

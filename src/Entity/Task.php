@@ -138,4 +138,16 @@ class Task
         // The first entry (if any) will be the "current" one.
         return reset($sortedEntries);
     }
+
+    public function calculateTotalElapsedTime(): int
+    {
+        $totalElapsedTime = 0;
+        foreach ($this->getTimeEntries() as $timeEntry) {
+            if ($timeEntry->getEndTime() !== null) {
+                $totalElapsedTime += $timeEntry->calculateElapsedTimeInSeconds();
+            }
+        }
+        
+        return $totalElapsedTime;
+    }
 }
