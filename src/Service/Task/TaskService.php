@@ -6,19 +6,16 @@ use App\Entity\Task;
 use App\Entity\TimeEntry;
 use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 
 class TaskService implements TaskServiceInterface
 {
     private EntityManagerInterface $entityManager;
     private TaskRepository $taskRepository;
-    private LoggerInterface $logger;
 
-    public function __construct(EntityManagerInterface $entityManager, TaskRepository $taskRepository, LoggerInterface $logger)
+    public function __construct(EntityManagerInterface $entityManager, TaskRepository $taskRepository)
     {
         $this->entityManager = $entityManager;
         $this->taskRepository = $taskRepository;
-        $this->logger = $logger;
     }
 
     public function startTask(string $taskName): void
@@ -69,8 +66,6 @@ class TaskService implements TaskServiceInterface
         foreach ($taskSummaries as $summary) {
             $totalTimeWorkedInDay += $summary['totalTimeWorked'];
         }
-
-        // $this->logger->info('getTaskSummary:', ['taskSummaries::' => $taskSummaries]);
 
         return [
             'totalTimeWorkedInDay' => $totalTimeWorkedInDay,

@@ -124,6 +124,10 @@ class Task
             return $entry->getEndTime() === null;
         });
 
+        if ($activeEntries->isEmpty()) {
+            return null;
+        }
+
         // Sort the active entries by id (descending).
         $sortedEntries = $activeEntries->toArray();
         usort($sortedEntries, function (TimeEntry $a, TimeEntry $b) {
