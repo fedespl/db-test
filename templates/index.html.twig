@@ -46,11 +46,6 @@
             </div>
         </div> 
     </div>
-    
-    {# <a href="{{ path('task_summary') }}" class="btn btn-secondary">View Summary</a>
-
-    <div id="success-message" class="alert alert-success mt-3" style="display: none;"></div> #}
-
 </div>
 
 <script>
@@ -101,7 +96,6 @@
 
                 makeAjaxCall('{{ path('task_start') }}')
                     .then(function(data) {
-console.log('111');
                         clearInterval(timer);
                         elapsedTime = 0;
                         displayTime();
@@ -151,43 +145,6 @@ console.log('111');
                 });
             });
         }
-
-
-        /*function makeAjaxCall(path)
-        {
-            return new Promise(function(resolve, reject) {
-            }
-            $.ajax({
-                    url: path,
-                    method: 'POST',
-                    data: {
-                        name: $('#task_form_name').val()
-                    },
-                    success: function(data) {
-                        if (data.success) {
-                            // Task started or stopped successfully
-                            showSuccessMessage(data.message);
-                        } else {
-                            showErrorMessage(data.message);
-
-                            // If there is an error, prevent the stopwatch from starting
-                            if (isRunning) {
-                                clearInterval(timer);
-                                isRunning = false;
-                            }
-                        }
-                    },
-                    error: function(xhr, textStatus, errorThrown) {
-                        // Handle Ajax error here
-                        showErrorMessage('An error occurred during the request.');
-                        // If there is an error, prevent the stopwatch from starting
-                        if (isRunning) {
-                            clearInterval(timer);
-                            isRunning = false;
-                        }
-                    }
-                });
-        }*/
 
         updateStartButtonState();
 
